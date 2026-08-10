@@ -14,6 +14,8 @@ jobs:
   lint:
     name: Lint Python
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +33,8 @@ jobs:
   validate-manifests:
     name: Validate Addon Manifests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
