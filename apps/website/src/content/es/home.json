@@ -1,0 +1,81 @@
+{
+  "hero": {
+    "title": "Boteco Pro: La Solución Completa para Bares y Restaurantes",
+    "subtitle": "Gestiona tu negocio con practicidad y eficiencia.",
+    "cta": "Prueba Gratis",
+    "demoButton": "Ver Demostración"
+  },
+  "features": [
+    {
+      "title": "Gestión de Mesas",
+      "description": "Controla tus mesas y pedidos de forma intuitiva."
+    },
+    {
+      "title": "Control de Inventario",
+      "description": "Mantén tu inventario siempre actualizado y evita pérdidas."
+    },
+    {
+      "title": "Informes Detallados",
+      "description": "Obtén información valiosa para optimizar tus ventas."
+    }
+  ],
+  "howItWorks": {
+    "title": "Cómo Funciona",
+    "steps": [
+      {
+        "title": "Registra tu Negocio",
+        "description": "Empieza en pocos minutos, es simple y rápido."
+      },
+      {
+        "title": "Configura tu Menú",
+        "description": "Añade tus productos y precios fácilmente."
+      },
+      {
+        "title": "Empieza a Vender",
+        "description": "Atiende a tus clientes con agilidad y eficiencia."
+      }
+    ]
+  },
+  "plans": {
+    "title": "Nuestros Planes",
+    "description": "Elige el plan ideal para tu negocio.",
+    "options": [
+      {
+        "name": "Básico",
+        "price": "$ 99/mes",
+        "features": ["Gestión de Mesas", "Control de Inventario Básico"]
+      },
+      {
+        "name": "Premium",
+        "price": "$ 199/mes",
+        "features": ["Todas las funcionalidades del Básico", "Informes Avanzados", "Soporte Prioritario"]
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "quotes": [
+      {
+        "text": "Boteco Pro revolucionó la gestión de mi bar. ¡Lo recomiendo!",
+        "author": "Juan Pérez, Bar de Juan"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "items": [
+      {
+        "question": "¿Cómo empiezo?",
+        "answer": "Solo regístrate y sigue los pasos de configuración."
+      },
+      {
+        "question": "¿Hay un período de prueba?",
+        "answer": "Sí, ofrecemos un período de prueba gratuito de 7 días."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "¿Listo para transformar tu negocio?",
+    "button": "Contáctanos"
+  }
+}

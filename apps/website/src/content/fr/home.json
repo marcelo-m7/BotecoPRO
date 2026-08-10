@@ -1,0 +1,81 @@
+{
+  "hero": {
+    "title": "Boteco Pro: La Solution Complète pour les Bars et Restaurants",
+    "subtitle": "Gérez votre entreprise avec praticité et efficacité.",
+    "cta": "Essai Gratuit",
+    "demoButton": "Voir la Démo"
+  },
+  "features": [
+    {
+      "title": "Gestion des Tables",
+      "description": "Contrôlez vos tables et commandes de manière intuitive."
+    },
+    {
+      "title": "Contrôle des Stocks",
+      "description": "Gardez votre stock toujours à jour et évitez les pertes."
+    },
+    {
+      "title": "Rapports Détaillés",
+      "description": "Obtenez des informations précieuses pour optimiser vos ventes."
+    }
+  ],
+  "howItWorks": {
+    "title": "Comment ça Marche",
+    "steps": [
+      {
+        "title": "Enregistrez Votre Entreprise",
+        "description": "Commencez en quelques minutes, c'est simple et rapide."
+      },
+      {
+        "title": "Configurez Votre Menu",
+        "description": "Ajoutez facilement vos produits et prix."
+      },
+      {
+        "title": "Commencez à Vendre",
+        "description": "Servez vos clients avec agilité et efficacité."
+      }
+    ]
+  },
+  "plans": {
+    "title": "Nos Plans",
+    "description": "Choisissez le plan idéal pour votre entreprise.",
+    "options": [
+      {
+        "name": "Basique",
+        "price": "€ 99/mois",
+        "features": ["Gestion des Tables", "Contrôle des Stocks Basique"]
+      },
+      {
+        "name": "Premium",
+        "price": "€ 199/mois",
+        "features": ["Toutes les fonctionnalités du Basique", "Rapports Avancés", "Support Prioritaire"]
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Ce que disent nos clients",
+    "quotes": [
+      {
+        "text": "Boteco Pro a révolutionné la gestion de mon bar. Je le recommande !",
+        "author": "Jean Dupont, Bar de Jean"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Questions Fréquemment Posées",
+    "items": [
+      {
+        "question": "Comment puis-je commencer ?",
+        "answer": "Il suffit de vous inscrire et de suivre les étapes de configuration."
+      },
+      {
+        "question": "Y a-t-il une période d'essai ?",
+        "answer": "Oui, nous offrons une période d'essai gratuite de 7 jours."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Prêt à transformer votre entreprise ?",
+    "button": "Contactez-nous"
+  }
+}

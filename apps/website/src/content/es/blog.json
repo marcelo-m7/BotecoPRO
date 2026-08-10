@@ -1,0 +1,24 @@
+{
+  "title": "Nuestro Blog",
+  "description": "Mantente al día con noticias y consejos para tu bar o restaurante.",
+  "posts": [
+    {
+      "id": "1",
+      "title": "5 Consejos para Optimizar tu Servicio",
+      "excerpt": "Descubre cómo mejorar la experiencia de tus clientes.",
+      "date": "2023-10-26"
+    },
+    {
+      "id": "2",
+      "title": "Gestión de Inventario: Evita Desperdicios",
+      "excerpt": "Aprende a controlar tu inventario de forma eficiente.",
+      "date": "2023-10-20"
+    },
+    {
+      "id": "3",
+      "title": "Próximamente: Nuevas Funcionalidades en Boteco Pro",
+      "excerpt": "Mantente atento a las próximas actualizaciones de nuestra plataforma.",
+      "date": "2023-10-15"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "greeting": "Hello, {{userName}}!",
+  "title": "Dashboard",
+  "demoNotice": "(Sample data for demonstration – future integration with internal API)",
+  "cards": [
+    {
+      "title": "Recent Orders",
+      "value": "12",
+      "description": "New orders in the last 24h"
+    },
+    {
+      "title": "Open Tables",
+      "value": "5",
+      "description": "Tables currently being served"
+    },
+    {
+      "title": "Low Stock",
+      "value": "3 items",
+      "description": "Products that need to be restocked"
+    },
+    {
+      "title": "Sales Today",
+      "value": "$ 1,250.00",
+      "description": "Total sales so far"
+    }
+  ]
+}
