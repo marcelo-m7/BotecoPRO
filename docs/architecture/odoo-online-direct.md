@@ -71,6 +71,29 @@ The researched write boundary is recorded in
 [`adr-m8-controlled-pos-write.md`](adr-m8-controlled-pos-write.md) and remains
 blocked.
 
+## Flutter code boundary
+
+The mobile application uses a deliberately simple responsibility-based
+structure:
+
+```text
+pages/widgets → providers → services → OdooClient → Odoo JSON-2
+                         ↘ storage services
+```
+
+- application models are transport-independent and expose no raw JSON-2 maps;
+- `OdooSessionProvider` owns authentication and company/POS context;
+- `CatalogProvider` owns synchronization, snapshot freshness and Restaurant
+  reads;
+- `CartProvider` owns only the context-bound local draft and persistence;
+- Odoo transport, mapping and persistence never live in widgets;
+- demo models remain isolated under `models/legacy`.
+
+`lib/core/odoo` and the parallel `lib/features` screen tree were removed. They
+had become duplicate, mixed-responsibility containers. No repository layer was
+retained because the connection, catalog and POS services already define the
+cohesive external-system boundary needed by this MVP.
+
 ## Consequences
 
 Odoo standard models, ACLs, record rules and multi-company context become the

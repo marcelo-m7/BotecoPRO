@@ -13,12 +13,19 @@ Online.
 
 For Flutter changes:
 
-- call Odoo only through `lib/core/odoo/odoo_client.dart` and repositories;
+- keep application data in `models/`, I/O in `services/`, orchestration in
+  `providers/` and presentation in `pages/`/`widgets/`;
+- call Odoo only through `lib/services/odoo/odoo_client.dart` and the cohesive
+  connection/catalog/POS services;
+- do not recreate the removed `lib/core/odoo` dumping ground or add a
+  repository layer merely for architectural symmetry;
 - keep the API key in `flutter_secure_storage` only;
 - use explicit domains, fields, limits and pagination;
 - keep native Android/iOS/POS as the MVP target; Web is not a credential-safe
   target for this flow;
 - keep the old local screens only in the explicit debug demo mode;
+- preserve schema-v1 snapshot/cart compatibility and exact
+  instance/user/company/POS isolation;
 - do not implement POS/order/payment writes until their Odoo lifecycle is
   validated.
 

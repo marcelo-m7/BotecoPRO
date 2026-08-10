@@ -15,7 +15,7 @@ Odoo Online (saas~19.4+e)
 
 O MVP não possui backend BotecoPRO, REST API própria, Supabase, FastAPI,
 middleware ou addons Python obrigatórios. Odoo é a fonte de verdade de
-identidade, empresas, POS, categorias e produtos.
+identidade, empresas, POS, categorias, produtos e contexto Restaurant.
 
 O aplicativo integrado é o submódulo `apps/mobile`, apontado para a branch
 `feat/odoo-online-mvp` e fixado sempre num commit já publicado no remoto do
@@ -46,15 +46,19 @@ instância configurada pelo utilizador.
 - conexão e diagnóstico JSON-2;
 - utilizador atual e empresas permitidas;
 - configurações POS autorizadas;
-- categorias POS e produtos paginados, em modo read-only.
+- categorias POS e catálogo completo paginado, em modo read-only;
+- pisos/mesas Restaurant em leitura;
+- snapshot local versionado e estado offline explícito;
+- comanda local persistente, não fiscal e reconciliada com o catálogo.
 
-Mesas, pedidos, pagamentos, stock writes, offline avançado e provisionamento
-de dispositivos estão documentados como fases posteriores.
+Pedidos Odoo, pagamentos, movimentos de stock, writes contabilísticos, outbox
+offline e provisionamento de dispositivos estão documentados como fases
+posteriores.
 
 ## Documentação
 
 - `docs/architecture/odoo-online-direct.md` — decisão arquitetural e contrato de transporte;
 - `docs/architecture/domain-mapping.md` — mapeamento Flutter/Odoo;
-- `docs/architecture/offline-sync.md` — roadmap offline futuro;
+- `docs/architecture/offline-sync.md` — snapshot M7 e roadmap offline futuro;
 - `docs/roadmap/odoo-online-mvp.md` — milestones e critérios de aceite;
 - `docs/archive/` — decisões e contratos intermediários históricos.

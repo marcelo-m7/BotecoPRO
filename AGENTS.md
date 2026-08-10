@@ -13,9 +13,10 @@ There is no BotecoPRO backend, REST intermediary, Supabase project, gateway,
 JWT service or mandatory Python addon. Odoo is the source of truth for business
 data and permissions.
 
-The first vertical is read-only: connection, `res.users`, `res.company`,
-`pos.config`, `pos.category` and POS products. Writes, offline outbox and device
-provisioning are later milestones.
+The implemented M0–M7 vertical is read-only: connection, identity/company/POS,
+catalog, Restaurant context, a context-bound local snapshot and a persistent
+non-fiscal draft cart. Odoo writes, an offline outbox and device provisioning
+are later milestones.
 
 ## Safety rules
 
@@ -42,9 +43,13 @@ provisioning are later milestones.
 apps/mobile/       Flutter submodule and source of the mobile app
 apps/website/      Website submodule, retained independently
 docs/architecture/ Odoo integration decisions and domain mapping
-docs/roadmap/      Future cache, writes and provisioning milestones
+docs/roadmap/      MVP, writes and provisioning milestones
 docs/archive/      Superseded intermediary API/addon designs
 ```
+
+Inside Flutter, use responsibility-based `models/`, `services/`, `providers/`,
+`pages/` and `widgets/`. Connected Odoo code must not reintroduce a mixed
+`lib/core/odoo` container or a repository layer without a concrete need.
 
 The `apps/mobile` gitlink must always reference a commit already pushed to the
 `BotecoPro-app` remote. The `.gitmodules` branch is advisory; the gitlink is

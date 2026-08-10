@@ -44,6 +44,22 @@ set +a
 It never runs in CI and must not be redirected to a log or artifact containing
 environment values.
 
+## Flutter structure
+
+```text
+lib/models/            application data; demo types live in legacy/
+lib/services/odoo/     JSON-2 client and connection/catalog/POS services
+lib/services/storage/  credentials, snapshot and draft persistence
+lib/providers/         session, catalog and cart state
+lib/pages/             connected and explicit demo screens
+lib/widgets/           reusable presentation
+```
+
+`main.dart` is the composition root: it creates the shared storage/runtime
+dependencies and wires the three providers. Pages do not build JSON-2 payloads
+or access device storage. The connected route never imports demo business
+models.
+
 ## Offline read validation
 
 After one complete successful synchronization, interrupt networking and reopen
