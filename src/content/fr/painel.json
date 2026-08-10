@@ -1,0 +1,27 @@
+{
+  "greeting": "Bonjour, {{userName}} !",
+  "title": "Tableau de Bord",
+  "demoNotice": "(Données d'exemple pour démonstration – future intégration avec API interne)",
+  "cards": [
+    {
+      "title": "Commandes Récentes",
+      "value": "12",
+      "description": "Nouvelles commandes au cours des dernières 24h"
+    },
+    {
+      "title": "Tables Ouvertes",
+      "value": "5",
+      "description": "Tables actuellement en service"
+    },
+    {
+      "title": "Stock Faible",
+      "value": "3 articles",
+      "description": "Produits à réapprovisionner"
+    },
+    {
+      "title": "Ventes Aujourd'hui",
+      "value": "€ 1 250,00",
+      "description": "Total des ventes jusqu'à présent"
+    }
+  ]
+}

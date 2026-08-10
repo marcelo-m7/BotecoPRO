@@ -1,0 +1,17 @@
+{
+  "title": "Entre em Contato",
+  "description": "Tem alguma dúvida ou quer saber mais sobre o Boteco Pro? Preencha o formulário abaixo e entraremos em contato.",
+  "form": {
+    "nameLabel": "Nome",
+    "namePlaceholder": "Seu nome completo",
+    "emailLabel": "Email",
+    "emailPlaceholder": "seu.email@exemplo.com",
+    "phoneLabel": "Telefone (Opcional)",
+    "phonePlaceholder": "(XX) XXXXX-XXXX",
+    "messageLabel": "Mensagem",
+    "messagePlaceholder": "Sua mensagem...",
+    "submitButton": "Enviar Mensagem",
+    "successMessage": "Obrigado! Sua mensagem foi enviada com sucesso.",
+    "errorMessage": "Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente."
+  }
+}

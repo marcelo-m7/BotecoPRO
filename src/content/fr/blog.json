@@ -1,0 +1,24 @@
+{
+  "title": "Notre Blog",
+  "description": "Restez informé des actualités et des conseils pour votre bar ou restaurant.",
+  "posts": [
+    {
+      "id": "1",
+      "title": "5 Astuces pour Optimiser Votre Service",
+      "excerpt": "Découvrez comment améliorer l'expérience de vos clients.",
+      "date": "2023-10-26"
+    },
+    {
+      "id": "2",
+      "title": "Gestion des Stocks: Évitez le Gaspillage",
+      "excerpt": "Apprenez à contrôler votre stock de manière efficace.",
+      "date": "2023-10-20"
+    },
+    {
+      "id": "3",
+      "title": "Bientôt: Nouvelles Fonctionnalités dans Boteco Pro",
+      "excerpt": "Restez à l'écoute des prochaines mises à jour de notre plateforme.",
+      "date": "2023-10-15"
+    }
+  ]
+}

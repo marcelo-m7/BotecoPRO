@@ -1,0 +1,27 @@
+{
+  "greeting": "¡Hola, {{userName}}!",
+  "title": "Panel de Control",
+  "demoNotice": "(Datos de ejemplo para demostración – futura integración con API interna)",
+  "cards": [
+    {
+      "title": "Pedidos Recientes",
+      "value": "12",
+      "description": "Nuevos pedidos en las últimas 24h"
+    },
+    {
+      "title": "Mesas Abiertas",
+      "value": "5",
+      "description": "Mesas actualmente en servicio"
+    },
+    {
+      "title": "Inventario Bajo",
+      "value": "3 artículos",
+      "description": "Productos que necesitan ser reabastecidos"
+    },
+    {
+      "title": "Ventas Hoy",
+      "value": "$ 1.250,00",
+      "description": "Total de ventas hasta ahora"
+    }
+  ]
+}

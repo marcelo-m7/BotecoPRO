@@ -1,0 +1,17 @@
+{
+  "title": "Contactez-nous",
+  "description": "Vous avez une question ou souhaitez en savoir plus sur Boteco Pro ? Remplissez le formulaire ci-dessous et nous vous contacterons.",
+  "form": {
+    "nameLabel": "Nom",
+    "namePlaceholder": "Votre nom complet",
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre.email@exemple.com",
+    "phoneLabel": "Téléphone (Facultatif)",
+    "phonePlaceholder": "(XX) XXXXX-XXXX",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Votre message...",
+    "submitButton": "Envoyer le Message",
+    "successMessage": "Merci ! Votre message a été envoyé avec succès.",
+    "errorMessage": "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer."
+  }
+}
