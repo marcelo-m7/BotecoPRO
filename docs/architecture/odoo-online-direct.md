@@ -34,6 +34,18 @@ The connection diagnostic also counts the POS catalog with the same domain used
 by the paginated product list. A POS whose category restriction returns zero
 products is authenticated but not operationally ready.
 
+## Operational UI boundary
+
+In connected mode, POS categories and `product.product` variants are displayed
+directly in the Flutter catalog. The operator can filter, search, inspect and
+add those real products to a local non-fiscal cart, optionally associated with
+a read-only Odoo Restaurant table. Changing company or POS clears that local
+cart so contexts never mix.
+
+The displayed price is the `lst_price` catalog value returned by Odoo. It is
+informative only: POS pricelist, fiscal and transactional pricing are not
+reimplemented by Flutter and will be validated before any order write.
+
 ## Scope boundary
 
 The initial connection is read-only. `pos.session`, `pos.order`, payments,
@@ -45,6 +57,7 @@ Fiscal master-data reconciliation is also a release gate. Documents whose
 recipient does not match the selected Odoo company remain draft historical
 candidates until their legal relationship is evidenced; the mobile MVP never
 posts, pays, reconciles, cancels or edits accounting entries.
+The local cart does not create `pos.order`, payments, stock moves or invoices.
 
 ## Consequences
 
