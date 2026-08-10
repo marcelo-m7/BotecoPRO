@@ -32,4 +32,14 @@ make mobile-test
 
 The Odoo smoke flow is opt-in, read-only and must be run locally after an API
 key has been entered. It reports only sanitized version, identity, company, POS
-and product diagnostics.
+and product diagnostics:
+
+```bash
+set -a
+. ./.env.local
+set +a
+(cd apps/mobile && flutter test test/odoo_live_smoke_test.dart)
+```
+
+It never runs in CI and must not be redirected to a log or artifact containing
+environment values.

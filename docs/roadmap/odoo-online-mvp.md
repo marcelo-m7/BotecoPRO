@@ -14,4 +14,13 @@
     link credential onboarding.
 
 M0–M6 are the first acceptance boundary. Smoke tests against the configured
-Odoo Online instance are local-only and read-only.
+Odoo Online instance are local-only and read-only. A POS must return a nonzero
+catalog through its configured categories before the MVP is accepted.
+
+## Current data gate
+
+The Bar do Jonas fiscal identity and the recipient of historical AmBev NF-e
+documents require documentary reconciliation. The related `account.move`
+records remain drafts and are not accounting evidence for the configured Odoo
+company until that review is completed. This blocks M8 writes but not the
+read-only connection, identity, POS and product milestones.
