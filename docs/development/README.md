@@ -43,3 +43,11 @@ set +a
 
 It never runs in CI and must not be redirected to a log or artifact containing
 environment values.
+
+## Offline read validation
+
+After one complete successful synchronization, interrupt networking and reopen
+the app with the same instance, user, company and POS. The catalog must remain
+available with `Offline · Dados locais` and the last synchronization time. A
+different context must not restore it. The local draft comanda must survive an
+app restart, but is never represented as synchronized or queued for Odoo.

@@ -1,19 +1,31 @@
-# Offline roadmap
+# Offline read snapshot and future roadmap
 
-The MVP is intentionally online-first:
+M7 implements a deliberately small read-continuity layer:
 
 ```text
-Odoo JSON-2 → repository → optional local snapshot → Flutter UI
+Odoo JSON-2 → complete successful sync → versioned local snapshot → Flutter UI
 ```
 
-No write outbox, retry queue, conflict resolver or server-side synchronizer is
-implemented in the connection/products milestone. Existing local demo screens
-are isolated and are not synchronized with Odoo.
+The schema-v1 snapshot contains the selected company/POS catalog, POS
+categories, Restaurant floors/tables, Odoo version and synchronization time.
+It is accepted only for the exact normalized instance, authenticated user ID,
+company and POS. An incompatible schema or context is discarded. API keys,
+headers, cookies and authentication payloads are never serialized.
+
+Only network failures may activate the snapshot. Authentication, authorization
+and configuration failures never fall back to cache. The UI labels cached data
+as offline and shows the last successful synchronization time; demo data is
+never substituted.
+
+The comanda is a separate schema-v1 local draft. It survives restart only in
+the same context and retains captured informational prices. After a fresh sync,
+items are classified as available, changed or unavailable without deleting
+them. This draft is not an outbox and cannot create an Odoo order.
 
 Future work must preserve the following boundaries:
 
 - API key remains in secure storage and is never copied to a database;
-- snapshots are versioned and identified by Odoo IDs and `write_date`;
+- incompatible snapshot versions are discarded instead of migrated in M7;
 - reads use domains, fields and incremental pagination;
 - writes use an outbox with retry classification and idempotency keys;
 - POS writes are only enabled after session, payment, stock and accounting

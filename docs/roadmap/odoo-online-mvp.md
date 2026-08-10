@@ -8,13 +8,14 @@
 6. **M5** — POS configuration selection.
 7. **M6** — paginated POS categories and products, search/filter/detail and a
    client-side non-fiscal cart with optional read-only Restaurant table context.
-8. **M7** — versioned local snapshots and stale-data indicators.
+8. **M7** — complete: versioned read snapshots, explicit offline/stale state,
+   persistent context-bound draft cart and product reconciliation.
 9. **M8** — controlled POS writes after validating session, payments, stock,
    taxes and accounting effects.
 10. **Future** — outbox, retries, conflicts, device provisioning and QR/deep
     link credential onboarding.
 
-M0–M6 are the first acceptance boundary. Smoke tests against the configured
+M0–M7 are the current acceptance boundary. Smoke tests against the configured
 Odoo Online instance are local-only and read-only. A POS must return a nonzero
 catalog through its configured categories before the MVP is accepted.
 
@@ -28,7 +29,8 @@ read-only connection, identity, POS and product milestones.
 
 ## Next write boundary
 
-The next milestone may design a controlled `pos.order` flow only after an ADR
+The next milestone may rehearse a controlled `pos.order` flow only after the ADR
 validates native POS session ownership, pricelist/tax computation, payment,
 stock and accounting effects. The current cart remains local and is never an
 outbox or a queued Odoo write.
+See `docs/architecture/adr-m8-controlled-pos-write.md` for the unresolved gates.

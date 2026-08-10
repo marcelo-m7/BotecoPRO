@@ -42,6 +42,15 @@ add those real products to a local non-fiscal cart, optionally associated with
 a read-only Odoo Restaurant table. Changing company or POS clears that local
 cart so contexts never mix.
 
+A schema-v1 snapshot preserves the fully loaded catalog and Restaurant context
+after a successful synchronization. On network failure only, the exact same
+instance/user/company/POS can operate from that snapshot with an explicit
+offline indicator and synchronization timestamp.
+
+The local draft comanda is persisted separately and reconciled against the next
+fresh catalog. Changed and unavailable items remain visible. Neither snapshot
+nor draft contains the API key, and neither is a queued Odoo transaction.
+
 The displayed price is the `lst_price` catalog value returned by Odoo. It is
 informative only: POS pricelist, fiscal and transactional pricing are not
 reimplemented by Flutter and will be validated before any order write.
@@ -58,6 +67,9 @@ recipient does not match the selected Odoo company remain draft historical
 candidates until their legal relationship is evidenced; the mobile MVP never
 posts, pays, reconciles, cancels or edits accounting entries.
 The local cart does not create `pos.order`, payments, stock moves or invoices.
+The researched write boundary is recorded in
+[`adr-m8-controlled-pos-write.md`](adr-m8-controlled-pos-write.md) and remains
+blocked.
 
 ## Consequences
 
