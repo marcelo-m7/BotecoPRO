@@ -1,109 +1,71 @@
 # BotecoPRO – Agent Guidelines
 
-This file defines rules and context for AI coding agents (GitHub Copilot, Claude, GPT, etc.)
-working in this repository.
+## Architecture
 
----
+The MVP is a native Flutter client connected directly to Odoo Online through
+the official JSON-2 external API:
 
-## Golden Rules
-
-1. **Study before changing** – Read relevant source files and docs before modifying anything.
-2. **Odoo Standard First** – Check whether Odoo already provides the functionality. Do not recreate what Odoo offers.
-3. **Never duplicate standard models** – Extend `res.partner`, `pos.order`, `sale.order`, etc. instead of reimplementing them.
-4. **Never edit Odoo core** – All customisations live under `addons/`.
-5. **Small, traceable commits** – Follow [Conventional Commits](https://www.conventionalcommits.org/). One logical change per commit.
-6. **No secrets in the repository** – Never commit `.env`, API keys, passwords, or tokens. Use `.env.example` with placeholder values.
-7. **No undocumented dependencies** – Every new dependency must be justified in the PR description.
-8. **Tests before concluding** – Run `make test` (or sub-targets) after changes. CI must pass.
-9. **Update docs with code** – Architecture changes require updating `docs/architecture/`. API changes require updating `docs/api/`.
-10. **Preserve offline capability** – The Flutter app must continue to function with limited connectivity. See `docs/architecture/offline-sync.md`.
-
----
-
-## Project Architecture Overview
-
-```
-BotecoPRO/
-├── addons/               ← Odoo custom addons (Python)
-│   ├── botecopro_core/   ← Domain models & extensions of Odoo standard
-│   ├── botecopro_api/    ← REST API layer for mobile/website integration
-│   └── botecopro_website/← Odoo Website extensions / portal pages
-│
-├── apps/
-│   ├── mobile/           ← Flutter app (iOS, Android, POS terminal)
-│   └── website/          ← Public-facing website (may migrate to Odoo Website)
-│
-├── packages/
-│   ├── api_contracts/    ← Shared API request/response schemas (OpenAPI / JSON)
-│   └── shared/           ← Shared utilities between apps
-│
-├── infrastructure/
-│   └── docker/           ← docker-compose for local dev
-│
-└── docs/                 ← Architecture, API, migration, development docs
+```text
+Flutter → HTTPS/JSON-2 → Odoo Online
 ```
 
----
+There is no BotecoPRO backend, REST intermediary, Supabase project, gateway,
+JWT service or mandatory Python addon. Odoo is the source of truth for business
+data and permissions.
 
-## Domain Mapping (Odoo ↔ BotecoPRO)
+The first vertical is read-only: connection, `res.users`, `res.company`,
+`pos.config`, `pos.category` and POS products. Writes, offline outbox and device
+provisioning are later milestones.
 
-See full details in `docs/architecture/domain-mapping.md`.
+## Safety rules
 
-| BotecoPRO Concept | Odoo Model               |
-|-------------------|--------------------------|
-| Customer          | `res.partner`            |
-| Product           | `product.template`       |
-| Category          | `pos.category`           |
-| Order (POS)       | `pos.order`              |
-| Order (delivery)  | `sale.order`             |
-| Employee          | `hr.employee`            |
-| User              | `res.users`              |
-| Payment           | `pos.payment`            |
-| Stock             | `stock.quant`            |
-| Company/venue     | `res.company`            |
+1. Study the relevant source and Odoo model documentation before changing code.
+2. Use Odoo standard models first; do not duplicate `res.partner`, `pos.order`,
+   `product.product` or other standard models.
+3. Do not add custom addons as an Odoo Online MVP requirement.
+4. Never edit Odoo core.
+5. Never commit `.env`, `.env.local`, API keys, passwords or tokens.
+6. Never print API keys in logs, exceptions, analytics, fixtures or tests.
+7. Keep metadata in ordinary preferences and the API key only in
+   `flutter_secure_storage`.
+8. All Odoo calls go through the central Flutter `OdooClient`; widgets do not
+   construct JSON-2 payloads.
+9. Preserve offline/demo code while it is explicitly isolated from connected
+   Odoo mode.
+10. Run `flutter analyze --fatal-infos` and relevant tests before concluding.
+11. Use small Conventional Commits.
+12. Update architecture and roadmap documentation with behavior changes.
 
----
+## Repository layout
 
-## Addon Conventions
-
-- Each addon has `__manifest__.py`, `__init__.py`, and standard subdirs (`models/`, `views/`, `security/`, `data/`, `static/`).
-- Model names follow `botecopro.*` prefix for custom models.
-- Do not add `depends` on community modules without explicit discussion.
-- `botecopro_api` exposes endpoints under `/api/v1/botecopro/`.
-
----
-
-## Flutter Conventions
-
-- Architecture: feature-first with repository pattern.
-- State management: BLoC (or Riverpod – see `apps/mobile/` README for current choice).
-- All Odoo communication goes through the repository layer, never from UI directly.
-- Local persistence via Hive or SQLite – never hardcoded data.
-- Offline queue must be respected for order creation.
-
----
-
-## Commit Prefixes
-
-```
-feat:     New feature
-fix:      Bug fix
-docs:     Documentation only
-style:    Formatting, no logic change
-refactor: Refactoring without behavior change
-test:     Tests
-chore:    Tooling, config, deps
-ci:       CI/CD changes
+```text
+apps/mobile/       Flutter submodule and source of the mobile app
+apps/website/      Website submodule, retained independently
+docs/architecture/ Odoo integration decisions and domain mapping
+docs/roadmap/      Future cache, writes and provisioning milestones
+docs/archive/      Superseded intermediary API/addon designs
 ```
 
-Scope examples: `feat(api):`, `fix(mobile):`, `docs(architecture):`, `chore(odoo):`
+The `apps/mobile` gitlink must always reference a commit already pushed to the
+`BotecoPro-app` remote. The `.gitmodules` branch is advisory; the gitlink is
+the reproducible checkout reference.
 
----
+## Secrets and local development
 
-## What NOT to do
+Use local-only values:
 
-- Do not create new Odoo models that mirror `res.partner`, `pos.order`, `product.template`, etc.
-- Do not bypass the `botecopro_api` addon to call Odoo JSON-RPC directly from Flutter (unless prototyping).
-- Do not add new Python dependencies to addons without updating `__manifest__.py` `external_dependencies`.
-- Do not merge to `main` without a passing CI.
-- Do not delete `apps/website/` – it is preserved during Fase 0 pending website strategy decision.
+```env
+ODOO_ONLINE_URL=
+ODOO_ONLINE_USERNAME=
+ODOO_ONLINE_API_KEY=
+```
+
+The smoke test is opt-in, read-only and never runs in CI. Historical credentials
+found in old app code or commits must be revoked/rotated; deleting a file does
+not invalidate a previously exposed key.
+
+## Commit prefixes
+
+```text
+feat: fix: docs: refactor: test: chore: ci:
+```

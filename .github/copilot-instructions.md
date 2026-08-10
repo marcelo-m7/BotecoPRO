@@ -1,68 +1,30 @@
-# GitHub Copilot Instructions – BotecoPRO
+# BotecoPRO Copilot Instructions
 
-You are assisting with **BotecoPRO**, a bar/restaurant management platform built on:
-- **Odoo 17/19** (ERP backend, POS, accounting)
-- **Flutter** (mobile/POS client)
-- **Website** (public-facing, strategy under evaluation)
+The current integration target is:
 
----
-
-## Context
-
-This is a monorepo. The source of truth is this repository.
-Previous code lived in `marcelo-m7/BotecoPro-app` and `marcelo-m7/BotecoPRO-website` – their histories were imported via `git subtree`.
-
----
-
-## Non-negotiable rules
-
-1. **Odoo Standard First** – check Odoo's standard models before creating new ones.
-2. **No core Odoo edits** – customisations live only in `addons/botecopro_*`.
-3. **No secrets** – never suggest code that contains passwords, tokens, or API keys.
-4. **Conventional Commits** – always use proper commit prefix + scope.
-5. **Update docs** – when suggesting API or architecture changes, also update `docs/`.
-6. **Offline-first** – Flutter features must support offline operation via local cache + outbox queue.
-
----
-
-## Key files to read before making changes
-
-- `AGENTS.md` – full guidelines
-- `docs/architecture/domain-mapping.md` – Odoo model mapping
-- `docs/architecture/offline-sync.md` – sync strategy
-- `docs/api/README.md` – API contracts
-- `apps/mobile/README.md` – Flutter architecture
-- `addons/botecopro_api/README.md` – API addon
-
----
-
-## Preferred patterns
-
-### Odoo addon
-
-```python
-# models/botecopro_venue.py
-from odoo import models, fields
-
-class BotecoproVenue(models.Model):
-    _name = 'botecopro.venue'
-    _description = 'BotecoPRO Venue'
-    _inherits = {}  # extend standard when possible
-
-    company_id = fields.Many2one('res.company', required=True, ondelete='restrict')
+```text
+Flutter native → Odoo JSON-2 → Odoo Online saas~19.4+
 ```
 
-### Flutter API call
+Do not introduce a BotecoPRO API, FastAPI, Supabase, middleware, gateway or
+custom authentication service. Use the Odoo user/API-key identity and standard
+ACLs/record rules. Do not assume that Python addons can be installed on Odoo
+Online.
 
-```dart
-// Always go through the repository layer
-final orders = await _orderRepository.getOrders(since: lastSync);
-```
+For Flutter changes:
 
-### API endpoint (botecopro_api)
+- call Odoo only through `lib/core/odoo/odoo_client.dart` and repositories;
+- keep the API key in `flutter_secure_storage` only;
+- use explicit domains, fields, limits and pagination;
+- keep native Android/iOS/POS as the MVP target; Web is not a credential-safe
+  target for this flow;
+- keep the old local screens only in the explicit debug demo mode;
+- do not implement POS/order/payment writes until their Odoo lifecycle is
+  validated.
 
-```python
-@http.route('/api/v1/botecopro/health', auth='none', type='json', methods=['GET'])
-def health(self, **kwargs):
-    return {'status': 'ok', 'version': '1'}
-```
+For repository changes:
+
+- update `docs/architecture/` and `docs/roadmap/` with architecture changes;
+- never point `apps/mobile` at a local-only commit;
+- preserve `.env.local` and never expose its values;
+- use small Conventional Commits and run Flutter analysis/tests.

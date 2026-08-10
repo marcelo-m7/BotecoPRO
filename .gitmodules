@@ -1,7 +1,7 @@
 [submodule "apps/mobile"]
 	path = apps/mobile
 	url = https://github.com/marcelo-m7/BotecoPro-app.git
-	branch = monorepo-migration-20260810
+	branch = feat/odoo-online-mvp
 [submodule "apps/website"]
 	path = apps/website
 	url = https://github.com/marcelo-m7/BotecoPRO-website.git

@@ -1,24 +1,35 @@
-# Development Guide
+# Development guide
 
-Consulte o `README.md` na raiz do repositório para instruções de setup.
-
-## Ambiente Local
+## Checkout
 
 ```bash
-make setup   # Copia .env.example → .env, faz pull das imagens Docker
-make up      # Inicia Odoo + PostgreSQL
-make logs    # Acompanha os logs
+git clone --recurse-submodules https://github.com/marcelo-m7/BotecoPRO.git
+cd BotecoPRO
 ```
 
-## Dependências
+The mobile submodule is pinned to a published commit on the matching
+`feat/odoo-online-mvp` branch. Do not manually point it at a local commit.
 
-- Docker Desktop 24+
-- Flutter SDK 3.x
-- Python 3.11+
-- Node.js 20+
+## Local configuration
 
-## Convenções
+Create `.env.local` with local-only values:
 
-- Conventional Commits (ver AGENTS.md)
-- PRs devem ter CI verde antes de merge
-- Documenta decisões de arquitetura em `docs/architecture/`
+```env
+ODOO_ONLINE_URL=
+ODOO_ONLINE_USERNAME=
+ODOO_ONLINE_API_KEY=
+```
+
+Never commit this file or use its values in tests, logs, screenshots or CI.
+
+## Flutter checks
+
+```bash
+make mobile-get
+make mobile-analyze
+make mobile-test
+```
+
+The Odoo smoke flow is opt-in, read-only and must be run locally after an API
+key has been entered. It reports only sanitized version, identity, company, POS
+and product diagnostics.
