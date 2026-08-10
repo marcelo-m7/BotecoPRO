@@ -31,7 +31,7 @@ cp .env.example .env.local
 
 cd apps/mobile
 flutter pub get
-flutter analyze
+flutter analyze --fatal-infos
 flutter test
 ```
 
