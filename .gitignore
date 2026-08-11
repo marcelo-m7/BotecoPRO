@@ -12,6 +12,8 @@
 secrets/
 
 # ----- Python / Odoo ----------------------------------------
+.tools/
+.artifacts/
 __pycache__/
 *.py[codz]
 *$py.class
@@ -31,6 +33,8 @@ venv/
 .coverage
 htmlcov/
 .tox/
+screenshots/
+emulator-data/
 
 # ----- Flutter / Dart ---------------------------------------
 apps/mobile/.dart_tool/

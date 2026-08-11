@@ -1,0 +1,16 @@
+{
+  "name": "botecopro_pixel_api_36",
+  "avd_name": "botecopro_pixel_api_36",
+  "device": "pixel_6",
+  "api_level": 36,
+  "target": "google_apis",
+  "arch": "x86_64",
+  "locale": "pt-BR",
+  "language": "pt",
+  "country": "BR",
+  "orientation": "portrait",
+  "width": 1080,
+  "height": 2400,
+  "density": 420,
+  "boot_timeout_seconds": 300
+}

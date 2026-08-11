@@ -1,0 +1,18 @@
+{
+  "python_min": "3.10",
+  "flutter": "3.44.9",
+  "dart": "3.12.2",
+  "java": "17",
+  "android": {
+    "compile_sdk": 36,
+    "target_sdk": 36,
+    "min_sdk": 24,
+    "build_tools": "managed_by_android_gradle_plugin",
+    "android_gradle_plugin": "8.11.1",
+    "kotlin": "2.2.20",
+    "ndk": "28.2.13676358",
+    "gradle": "8.14.3",
+    "application_id": "com.example.botecopro",
+    "main_activity": "com.example.botecopro/.MainActivity"
+  }
+}
