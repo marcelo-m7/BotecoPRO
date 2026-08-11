@@ -74,19 +74,27 @@ jobs:
           script: make android-evidence ANDROID_REPEAT=3
 
       - name: Audit generated evidence
+        id: evidence_audit
         if: always()
         run: |
           if find .artifacts/evidence -mindepth 1 -maxdepth 1 -type d -print -quit 2>/dev/null | grep -q .; then
             make evidence-audit
           fi
 
-      - name: Upload Android evidence
+      - name: Upload debug APK
         if: always()
         uses: actions/upload-artifact@v6
         with:
+          name: botecopro-android-debug-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Android evidence
+        if: ${{ always() && steps.evidence_audit.outcome == 'success' }}
+        uses: actions/upload-artifact@v6
+        with:
           name: botecopro-android-evidence
-          path: |
-            .artifacts/evidence/
-            apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          path: .artifacts/evidence/
           if-no-files-found: warn
           retention-days: 14
