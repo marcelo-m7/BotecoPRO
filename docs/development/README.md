@@ -44,6 +44,7 @@ Focused commands remain available:
 make mobile-get
 make mobile-analyze
 make mobile-test
+make web-build
 make android-doctor
 make android-build
 make android-smoke
@@ -65,6 +66,21 @@ set +a
 
 It never runs in CI and must not be redirected to a log or artifact containing
 environment values.
+
+## Flutter Web boundary
+
+`make web-build` creates a release at `apps/mobile/build/web` without reading or
+embedding `.env.local`. CI compiles the same target. Never pass an Odoo API key
+through `--dart-define` because it becomes recoverable from the browser bundle.
+
+The current direct Odoo Online integration is not operational in a normal web
+browser: the target instance rejects the unauthenticated CORS preflight and
+does not return `Access-Control-Allow-*`, so Chrome blocks `/web/version` before
+the Bearer JSON-2 request can run. A Chrome process with CORS disabled may be
+used only as an isolated local diagnostic of the Flutter flow; it is neither a
+deployment option nor proof of normal browser compatibility. Real authenticated
+operation remains supported only by the native application until a separately
+approved browser-safe architecture exists.
 
 ## Public evidence
 

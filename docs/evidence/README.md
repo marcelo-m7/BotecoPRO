@@ -41,3 +41,29 @@ somente após as respectivas asserções, classifica a fonte, gera
 manifesto/hashes/relatórios e audita artefatos textuais.
 Evidência `REAL_INSTANCE` continua exigindo inspeção visual manual; captura não
 autoriza publicação.
+
+## Flutter Web em Chrome
+
+As capturas abaixo foram produzidas do build Web release em Chromium, com
+viewport móvel e locale `pt-BR`. Os campos de conexão foram mascarados na
+captura e a identidade/empresa foram redigidas antes da gravação do arquivo.
+
+![Tela de conexão Web](./web/connection.png)
+
+![Diagnóstico CORS sem expor os campos](./web/cors-diagnostic.png)
+
+![Bootstrap autenticado com identidade redigida](./web/authenticated-sanitized.png)
+
+SHA-256:
+
+- `connection.png`: `e2b097055ea89de10c5a9313b8959380189a23e26e517db92947a52923670a92`
+- `cors-diagnostic.png`: `825daaa02faf3456b41e1324d727f61bee9c5e5f2ae01414db9d1db15496fc5d`
+- `authenticated-sanitized.png`: `f28932012a7521094a23923330b97f1c721bc570d6e5fdc2c0624d61b8cbc7de`
+
+A terceira captura comprova que o gate do aplicativo prossegue após uma
+autenticação válida e que o bootstrap read-only chega à empresa, POS e ao
+catálogo. Para isolar o comportamento do aplicativo, esse ensaio local usou um
+processo Chrome temporário com a política CORS desativada. Isso **não** torna o
+build adequado para implantação Web: em Chrome normal, a própria instância
+Odoo bloqueia a requisição, como registra a segunda captura. A evidência Web
+não contém a API key e não substitui o smoke nativo read-only.

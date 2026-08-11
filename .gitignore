@@ -88,6 +88,10 @@ docs/evidence/*
 !docs/evidence/README.md
 !docs/evidence/odoo-authenticated.png
 !docs/evidence/odoo-products.png
+!docs/evidence/web/
+!docs/evidence/web/connection.png
+!docs/evidence/web/cors-diagnostic.png
+!docs/evidence/web/authenticated-sanitized.png
 
 # ----- OS ---------------------------------------------------
 .DS_Store

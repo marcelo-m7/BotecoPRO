@@ -4,6 +4,7 @@ ANDROID_REPEAT ?= 1
 
 .PHONY: help bootstrap doctor bootstrap-info tooling-test \
 	mobile-get mobile-format mobile-analyze mobile-test mobile-build mobile-check mobile-lint \
+	web-build \
 	android-doctor android-build android-smoke android-integration android-evidence evidence-audit report \
 	verify verify-android website-dev website-build test lint
 
@@ -17,6 +18,7 @@ help:
 	  'mobile-analyze     Run Flutter analyzer with fatal infos' \
 	  'mobile-test        Run Flutter tests' \
 	  'mobile-build       Build the Android debug APK' \
+	  'web-build          Build the credential-free Flutter Web release' \
 	  'mobile-check       Run get, format, analyze and tests' \
 	  'android-doctor     Diagnose Android build/device/emulator capability' \
 	  'android-build      Build the Android debug APK' \
@@ -54,6 +56,9 @@ mobile-test:
 
 mobile-build:
 	$(DEVTOOLS) flutter-build
+
+web-build:
+	$(DEVTOOLS) flutter-web-build
 
 mobile-check:
 	$(DEVTOOLS) flutter-check

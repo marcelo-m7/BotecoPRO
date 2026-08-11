@@ -41,6 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
     test_parser = subparsers.add_parser("flutter-test", help="executa testes Flutter")
     test_parser.add_argument("tests", nargs="*", help="arquivos/diretórios de teste opcionais")
     subparsers.add_parser("flutter-build", help="gera APK debug")
+    subparsers.add_parser("flutter-web-build", help="gera build Web release sem credenciais")
     subparsers.add_parser("android-doctor", help="diagnóstico Android read-only")
     subparsers.add_parser("android-build", help="instala dependências e gera APK debug")
 
@@ -165,6 +166,7 @@ def _verify(settings, runner: Runner, args) -> int:
     _tooling_test(settings, runner)
     _flutter_check(settings, runner)
     flutter.test(runner, settings)
+    flutter.build_web(runner, settings)
     flutter.build_apk(runner, settings)
     if args.android:
         android.smoke(
@@ -209,6 +211,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "flutter-build":
             flutter.pub_get(runner, settings)
             flutter.build_apk(runner, settings)
+            return 0
+        if args.command == "flutter-web-build":
+            flutter.pub_get(runner, settings)
+            flutter.build_web(runner, settings)
             return 0
         if args.command == "android-doctor":
             return doctor.run(settings, runner)

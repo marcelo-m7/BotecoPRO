@@ -147,6 +147,16 @@ def build_apk(runner: Runner, settings: Settings, *, check: bool = True) -> Comm
     )
 
 
+def build_web(runner: Runner, settings: Settings, *, check: bool = True) -> CommandResult:
+    executable = _required_flutter()
+    return runner.run(
+        [executable, "build", "web", "--release", "--no-pub"],
+        cwd=settings.mobile,
+        env=command_environment(),
+        check=check,
+    )
+
+
 def integration_drive_command(
     settings: Settings,
     *,
