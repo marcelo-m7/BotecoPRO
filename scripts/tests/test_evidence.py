@@ -46,6 +46,31 @@ class EvidenceTests(unittest.TestCase):
             self.assertTrue(markdown.is_file())
             self.assertEqual(json.loads(machine.read_text(encoding="utf-8"))["failures"], [])
 
+    def test_failure_report_preserves_failed_step(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary)
+            (run / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "run_id": "20260811T102300Z-failed",
+                        "command_result": "FAILED",
+                        "status": "failed",
+                        "test_scenario": "synthetic-connected-offline-cart",
+                        "failed_step": "offline-catalog",
+                        "error_category": "flutter_render_overflow",
+                        "evidence_classification": "SYNTHETIC",
+                        "screenshots": [],
+                        "steps": [],
+                        "attempts": [{"status": "failed"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            markdown, machine = generate(run)
+            report = json.loads(machine.read_text(encoding="utf-8"))
+            self.assertEqual(report["failed_step"], "offline-catalog")
+            self.assertIn("offline-catalog", markdown.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

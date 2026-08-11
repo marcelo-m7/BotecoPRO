@@ -46,6 +46,9 @@ make mobile-analyze
 make mobile-test
 make android-doctor
 make android-build
+make android-smoke
+make android-integration
+make android-evidence
 ```
 
 The Odoo smoke flow is opt-in, read-only and must be run locally after an API
@@ -73,12 +76,14 @@ data in this public repository. They contain no authentication credential.
 Do not add arbitrary screenshots. `.gitignore` allowlists only the two reviewed
 files; every new image requires a secret/privacy review before publication.
 
-Generated Android captures are never written here. `make android-evidence`
-defaults to `SYNTHETIC`, explicitly resets only the development application's
-local data, generates a manifest and hashes under `.artifacts/evidence/`, and
-audits text artifacts for obvious secrets. `REAL_INSTANCE` capture must be
-requested explicitly and remains pending manual visual review. Capture and
-publication are separate decisions.
+Generated Android captures are never written here. `make android-integration`
+drives the real Flutter pages, providers and persistence on Android against a
+deterministic read-only HTTP fixture. `make android-evidence` runs that same
+journey and stores nine assertion-backed screenshots, logcat, machine-readable
+results, a manifest and hashes under `.artifacts/evidence/`. Both commands use
+an isolated test namespace and clear only that namespace during setup/teardown.
+`REAL_INSTANCE` capture must be requested explicitly and remains pending manual
+visual review. Capture and publication are separate decisions.
 
 ## Flutter structure
 

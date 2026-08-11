@@ -3,13 +3,14 @@ from __future__ import annotations
 import unittest
 
 from devtools.adb import parse_devices
-from devtools.flutter import parse_versions
+from devtools.flutter import parse_framework_revision, parse_versions
 
 
 class ParsingTests(unittest.TestCase):
     def test_flutter_and_dart_versions(self) -> None:
-        output = "Flutter 3.44.9 • channel stable\nTools • Dart 3.12.2 • DevTools 2.57.0"
+        output = "Flutter 3.44.9 • channel stable\nFramework • revision 6b182d2c75\nTools • Dart 3.12.2 • DevTools 2.57.0"
         self.assertEqual(parse_versions(output), ("3.44.9", "3.12.2"))
+        self.assertEqual(parse_framework_revision(output), "6b182d2c75")
 
     def test_adb_devices_include_state_and_metadata(self) -> None:
         output = """List of devices attached

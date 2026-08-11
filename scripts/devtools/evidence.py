@@ -66,6 +66,7 @@ def environment_data(settings: Settings, runner: Runner, device: dict[str, str])
     version_result = flutter.version(runner, settings)
     output = f"{version_result.stdout}\n{version_result.stderr}" if version_result else ""
     flutter_version, dart_version = flutter.parse_versions(output)
+    flutter_revision = flutter.parse_framework_revision(output)
     return {
         "captured_at": utc_now(),
         "git_sha": _git(settings, "rev-parse", "HEAD"),
@@ -73,6 +74,7 @@ def environment_data(settings: Settings, runner: Runner, device: dict[str, str])
         "mobile_gitlink_sha": (_git(settings, "ls-tree", "HEAD", "apps/mobile").split() + ["unknown"] * 3)[2],
         "mobile_worktree_sha": _git(settings, "-C", str(settings.mobile), "rev-parse", "HEAD"),
         "flutter_version": flutter_version,
+        "flutter_framework_revision": flutter_revision,
         "dart_version": dart_version,
         "expected_java": settings.toolchain["java"],
         "device": device,

@@ -8,9 +8,9 @@ on:
 
 jobs:
   emulator-evidence:
-    name: API 36 emulator smoke and evidence
+    name: API 36 full Flutter E2E and evidence
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     permissions:
       contents: read
     steps:
@@ -66,7 +66,7 @@ jobs:
           profile: pixel_6
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -prop persist.sys.locale=pt-BR
           disable-animations: true
-          script: make android-evidence
+          script: make android-evidence ANDROID_REPEAT=3
 
       - name: Audit generated evidence
         if: always()

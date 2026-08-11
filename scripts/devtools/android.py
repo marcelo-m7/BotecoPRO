@@ -44,6 +44,17 @@ class SmokeResult:
     screenshot_sha256: str | None
 
 
+@dataclass
+class AndroidTarget:
+    adb: AdbClient
+    device: AndroidDevice
+    emulator_process: EmulatorProcess | None = None
+
+    def close(self) -> None:
+        if self.emulator_process:
+            self.emulator_process.stop(self.adb)
+
+
 def launch_emulator(
     settings: Settings,
     runner: Runner,
@@ -153,6 +164,44 @@ def _running_avd(adb: AdbClient, avd_name: str) -> AndroidDevice | None:
     return None
 
 
+def acquire_android_target(
+    settings: Settings,
+    runner: Runner,
+    *,
+    requested_device: str | None,
+    avd_name: str | None,
+) -> AndroidTarget:
+    adb = AdbClient(find_executable("adb"), runner, settings.root)
+    emulator_process: EmulatorProcess | None = None
+    if avd_name:
+        if requested_device:
+            raise RuntimeError("Use apenas um entre --device e --avd.")
+        device = _running_avd(adb, avd_name)
+        if device:
+            print(
+                f"[INFO] Reutilizando AVD {avd_name} em {device.serial}; "
+                "ele não será encerrado pela ferramenta."
+            )
+        else:
+            emulator_process = launch_emulator(
+                settings,
+                runner,
+                adb,
+                avd_name,
+                settings.artifacts / "emulator.log",
+            )
+            device = adb.select(emulator_process.serial)
+    else:
+        device = adb.select(requested_device)
+        adb.wait_for_boot(
+            device.serial,
+            int(settings.android_profile["boot_timeout_seconds"]),
+        )
+    if device.is_emulator:
+        configure_emulator(adb, device.serial, settings)
+    return AndroidTarget(adb, device, emulator_process)
+
+
 def smoke(
     settings: Settings,
     runner: Runner,
@@ -165,33 +214,20 @@ def smoke(
     uninstall_after: bool = False,
     artifact_directory: Path | None = None,
 ) -> SmokeResult:
-    adb = AdbClient(find_executable("adb"), runner, settings.root)
-    emulator_process: EmulatorProcess | None = None
+    target: AndroidTarget | None = None
     commands: list[CommandResult] = []
     device: AndroidDevice | None = None
     package = str(settings.toolchain["android"]["application_id"])
     activity = str(settings.toolchain["android"]["main_activity"])
     try:
-        if avd_name:
-            if requested_device:
-                raise RuntimeError("Use apenas um entre --device e --avd.")
-            device = _running_avd(adb, avd_name)
-            if device:
-                print(f"[INFO] Reutilizando AVD {avd_name} em {device.serial}; ele não será encerrado pela ferramenta.")
-            else:
-                emulator_process = launch_emulator(
-                    settings,
-                    runner,
-                    adb,
-                    avd_name,
-                    settings.artifacts / "emulator.log",
-                )
-                device = adb.select(emulator_process.serial)
-        else:
-            device = adb.select(requested_device)
-            adb.wait_for_boot(device.serial, int(settings.android_profile["boot_timeout_seconds"]))
-            if device.is_emulator:
-                configure_emulator(adb, device.serial, settings)
+        target = acquire_android_target(
+            settings,
+            runner,
+            requested_device=requested_device,
+            avd_name=avd_name,
+        )
+        adb = target.adb
+        device = target.device
 
         if build:
             flutter.pub_get(runner, settings)
@@ -218,27 +254,16 @@ def smoke(
         if FATAL_PATTERN.search(logs):
             raise RuntimeError("Exceção fatal detectada no logcat após o lançamento.")
         digest = adb.screenshot(device.serial, screenshot) if screenshot else None
-        integration_tests = sorted((settings.mobile / "integration_test").glob("*_test.dart")) if (settings.mobile / "integration_test").is_dir() else []
-        if integration_tests:
-            commands.append(
-                flutter.test(
-                    runner,
-                    settings,
-                    extra_args=["integration_test", "-d", device.serial],
-                )
-            )
-        else:
-            print("[INFO] Nenhum integration_test Flutter disponível; smoke de processo/renderização concluído.")
         result = SmokeResult(device, adb.properties(device.serial), commands, logs, screenshot, digest)
         if uninstall_after:
             commands.append(adb.uninstall(device.serial, package))
         return result
     except Exception:
-        if artifact_directory and device:
+        if artifact_directory and device and target:
             artifact_directory.mkdir(parents=True, exist_ok=True)
-            failure_logs = adb.logcat(device.serial).stdout
+            failure_logs = target.adb.logcat(device.serial).stdout
             (artifact_directory / "logcat.txt").write_text(failure_logs, encoding="utf-8")
         raise
     finally:
-        if emulator_process:
-            emulator_process.stop(adb)
+        if target:
+            target.close()

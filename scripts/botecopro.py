@@ -8,7 +8,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from devtools import android, doctor, evidence, flutter, report
+from devtools import android, doctor, evidence, flutter, integration, report
 from devtools.config import ConfigError, load_settings
 from devtools.privacy import audit_paths
 from devtools.process import CommandFailed, Runner
@@ -50,10 +50,19 @@ def build_parser() -> argparse.ArgumentParser:
     smoke_parser.add_argument("--reset-app-data", action="store_true", help="apaga dados locais apenas do APK de desenvolvimento")
     smoke_parser.add_argument("--uninstall-after", action="store_true", help="desinstala explicitamente o APK de desenvolvimento ao terminar")
 
+    integration_parser = subparsers.add_parser(
+        "android-integration",
+        help="executa o jornada Flutter sintética completa no Android",
+    )
+    _device_options(integration_parser)
+    integration_parser.add_argument("--repeat", type=int, default=1)
+    integration_parser.add_argument("--run-id")
+
     evidence_parser = subparsers.add_parser("android-evidence", help="captura evidência Android rastreável")
     _device_options(evidence_parser)
     evidence_parser.add_argument("--evidence-source", choices=("synthetic", "real"), default="synthetic")
     evidence_parser.add_argument("--run-id")
+    evidence_parser.add_argument("--repeat", type=int, default=1)
     evidence_parser.add_argument("--reset-app-data", action="store_true", help="obrigatório para evidência sintética determinística")
 
     audit_parser = subparsers.add_parser("evidence-audit", help="audita textos de uma execução por segredos óbvios")
@@ -138,6 +147,20 @@ def _android_smoke(settings, runner: Runner, args) -> int:
     return 0
 
 
+def _android_integration(settings, runner: Runner, args) -> int:
+    result = integration.run(
+        settings,
+        runner,
+        requested_device=args.device,
+        avd_name=args.avd,
+        repeat=args.repeat,
+        run_id=args.run_id,
+    )
+    label = "PASS" if result.ok else "FAIL"
+    print(f"[{label}] Android integration: {result.directory}")
+    return 0 if result.ok else 1
+
+
 def _verify(settings, runner: Runner, args) -> int:
     _tooling_test(settings, runner)
     _flutter_check(settings, runner)
@@ -195,7 +218,11 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "android-smoke":
             return _android_smoke(settings, runner, args)
+        if args.command == "android-integration":
+            return _android_integration(settings, runner, args)
         if args.command == "android-evidence":
+            if args.evidence_source == "synthetic":
+                return _android_integration(settings, runner, args)
             destination, manifest = evidence.capture(
                 settings,
                 runner,

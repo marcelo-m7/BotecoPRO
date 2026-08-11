@@ -10,6 +10,7 @@ from .process import CommandResult, Runner
 
 
 VERSION_PATTERN = re.compile(r"Flutter\s+(?P<flutter>\S+).*?Dart\s+(?P<dart>\S+)", re.DOTALL)
+FRAMEWORK_REVISION_PATTERN = re.compile(r"Framework\s+•\s+revision\s+([0-9a-f]+)")
 FORMAT_TARGETS = (
     "lib/main.dart",
     "lib/theme.dart",
@@ -32,6 +33,8 @@ FORMAT_TARGETS = (
     "lib/widgets/catalog_money_formatter.dart",
     "lib/widgets/odoo_sync_banner.dart",
     "test",
+    "integration_test",
+    "test_driver",
 )
 
 
@@ -67,6 +70,11 @@ def parse_versions(output: str) -> tuple[str | None, str | None]:
     if not match:
         return None, None
     return match.group("flutter"), match.group("dart")
+
+
+def parse_framework_revision(output: str) -> str | None:
+    match = FRAMEWORK_REVISION_PATTERN.search(output)
+    return match.group(1) if match else None
 
 
 def version(runner: Runner, settings: Settings) -> CommandResult | None:
@@ -136,6 +144,58 @@ def build_apk(runner: Runner, settings: Settings, *, check: bool = True) -> Comm
         cwd=settings.mobile,
         env=command_environment(),
         check=check,
+    )
+
+
+def integration_drive_command(
+    settings: Settings,
+    *,
+    device: str,
+    failure_screenshot_directory: Path,
+    application_binary: Path | None = None,
+) -> list[str]:
+    command = [
+        _required_flutter(),
+        "drive",
+        "--driver",
+        "test_driver/evidence_driver.dart",
+        "--target",
+        "integration_test/connected_offline_cart_flow_test.dart",
+        "--device-id",
+        device,
+        "--no-pub",
+        "--timeout",
+        "300",
+        "--screenshot",
+        str(failure_screenshot_directory),
+    ]
+    if application_binary is not None:
+        command.extend(["--use-application-binary", str(application_binary)])
+    return command
+
+
+def integration_drive(
+    runner: Runner,
+    settings: Settings,
+    *,
+    device: str,
+    evidence_directory: Path,
+    failure_screenshot_directory: Path,
+    application_binary: Path | None = None,
+) -> CommandResult:
+    environment = command_environment()
+    environment["BOTECOPRO_EVIDENCE_DIR"] = str(evidence_directory)
+    return runner.run(
+        integration_drive_command(
+            settings,
+            device=device,
+            failure_screenshot_directory=failure_screenshot_directory,
+            application_binary=application_binary,
+        ),
+        cwd=settings.mobile,
+        env=environment,
+        timeout=600,
+        check=False,
     )
 
 

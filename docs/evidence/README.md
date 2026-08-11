@@ -36,6 +36,8 @@ exigem revisão explícita antes de entrar no Git.
 
 Capturas reproduzíveis novas usam `make android-evidence` e são geradas em
 `.artifacts/evidence/<RUN_ID>/`, nunca diretamente neste diretório. O pipeline
-classifica a fonte, gera manifesto/hashes/relatórios e audita artefatos textuais.
+executa a jornada Flutter sintética completa em Android, registra nove capturas
+somente após as respectivas asserções, classifica a fonte, gera
+manifesto/hashes/relatórios e audita artefatos textuais.
 Evidência `REAL_INSTANCE` continua exigindo inspeção visual manual; captura não
 autoriza publicação.

@@ -31,6 +31,11 @@ def generate(run_directory: Path) -> tuple[Path, Path]:
         },
         "android_validation": manifest.get("device", {}),
         "scenario": manifest.get("test_scenario"),
+        "status": manifest.get("status", manifest.get("command_result")),
+        "steps": manifest.get("steps", []),
+        "attempts": manifest.get("attempts", []),
+        "failed_step": manifest.get("failed_step"),
+        "error_category": manifest.get("error_category"),
         "screenshots": screenshots,
         "failures": failures,
         "privacy_classification": manifest.get("evidence_classification"),
@@ -39,7 +44,8 @@ def generate(run_directory: Path) -> tuple[Path, Path]:
     json_path = run_directory / "report.json"
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
     screenshot_lines = "\n".join(
-        f"- `{item.get('filename')}` — `{item.get('sha256')}` — {item.get('scenario_step')}"
+        f"- `{item.get('filename')}` — `{item.get('sha256')}` — "
+        f"{item.get('step', item.get('scenario_step'))}"
         for item in screenshots
     ) or "- Nenhuma captura."
     failure_lines = "\n".join(f"- {failure}" for failure in failures) or "- Nenhuma."
@@ -61,6 +67,11 @@ Classification: `{manifest.get('evidence_classification', 'unknown')}`
 ## Scenario
 
 {manifest.get('test_scenario', 'not recorded')}
+
+- Status: `{manifest.get('status', manifest.get('command_result', 'unknown'))}`
+- Attempts: `{len(manifest.get('attempts', []))}`
+- Failed step: `{manifest.get('failed_step') or 'none'}`
+- Error category: `{manifest.get('error_category') or 'none'}`
 
 ## Screenshots
 

@@ -1,9 +1,10 @@
 DEVTOOLS_PYTHON := $(if $(wildcard .tools/devtools-venv/bin/python),.tools/devtools-venv/bin/python,python3)
 DEVTOOLS := $(DEVTOOLS_PYTHON) scripts/botecopro.py
+ANDROID_REPEAT ?= 1
 
 .PHONY: help bootstrap doctor bootstrap-info tooling-test \
 	mobile-get mobile-format mobile-analyze mobile-test mobile-build mobile-check mobile-lint \
-	android-doctor android-build android-smoke android-evidence evidence-audit report \
+	android-doctor android-build android-smoke android-integration android-evidence evidence-audit report \
 	verify verify-android website-dev website-build test lint
 
 help:
@@ -20,7 +21,8 @@ help:
 	  'android-doctor     Diagnose Android build/device/emulator capability' \
 	  'android-build      Build the Android debug APK' \
 	  'android-smoke      Build/install/launch on one selected Android target' \
-	  'android-evidence   Reset dev app data and capture SYNTHETIC evidence' \
+	  'android-integration Run the full synthetic Flutter journey on Android' \
+	  'android-evidence   Run integration and capture SYNTHETIC evidence' \
 	  'evidence-audit     Audit the latest evidence run' \
 	  'report             Regenerate reports for the latest evidence run' \
 	  'verify             Test tooling, format, analyze, test and build (no emulator)' \
@@ -68,8 +70,11 @@ android-build:
 android-smoke:
 	$(DEVTOOLS) android-smoke
 
+android-integration:
+	$(DEVTOOLS) android-integration --repeat $(ANDROID_REPEAT)
+
 android-evidence:
-	$(DEVTOOLS) android-evidence --evidence-source synthetic --reset-app-data
+	$(DEVTOOLS) android-evidence --evidence-source synthetic --repeat $(ANDROID_REPEAT)
 
 evidence-audit:
 	$(DEVTOOLS) evidence-audit

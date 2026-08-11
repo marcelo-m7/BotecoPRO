@@ -87,8 +87,11 @@ make verify
 ```
 
 Before Android device or emulator work, run `make android-doctor`. Use
-`make android-smoke` for the installed APK and `make android-evidence` for the
-ignored, synthetic evidence pipeline. Real-instance capture requires an
+`make android-smoke` for the lightweight installed-APK launch check,
+`make android-integration` for the full synthetic Flutter user journey and
+`make android-evidence` for the same journey plus ignored, traceable evidence.
+The integration flow must use its isolated storage namespace and must not use
+real Odoo credentials or data. Real-instance capture requires an
 explicit CLI classification and manual image privacy review. Never publish
 `.artifacts/` automatically. Toolchain versions are normative in
 `scripts/toolchain.json`; the Android test shape is in

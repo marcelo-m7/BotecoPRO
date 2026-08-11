@@ -40,6 +40,7 @@ make mobile-check
 make android-doctor
 make android-build
 make android-smoke
+make android-integration
 make android-evidence
 make evidence-audit
 make verify
@@ -93,25 +94,55 @@ display profile and disables animations, and stops only that process. On Linux,
 missing/inaccessible `/dev/kvm` fails immediately with a recommendation to use
 a physical device or the GitHub Actions Android workflow.
 
+## Android integration
+
+`make android-integration` runs the supported Flutter `integration_test`
+journey on a selected device or the canonical AVD. It starts at the real
+connection gate, uses the real pages/providers/storage with a deterministic
+read-only synthetic Odoo HTTP client, exercises connected catalog/cart,
+transport-level offline fallback and complete app-tree recreation, then
+reconnects. The fixture cannot execute an Odoo write and never uses `.env.local`
+or the normal application storage keys.
+
+For repeatability checks:
+
+```bash
+make android-integration ANDROID_REPEAT=3
+```
+
+The first attempt builds the integration APK; subsequent attempts reinstall
+that exact binary after clearing the development package. A failed attempt
+stops the sequence but retains its partial screenshots, driver output and
+logcat. Recreating the complete Flutter app/provider tree validates storage
+recovery; Android process `force-stop` recovery remains a separate future
+hardening check.
+
 ## Evidence
 
-`make android-evidence` performs a synthetic-classified APK build/install/
-launch/render smoke, resets only the development package data to prevent a real
-saved Odoo session from entering a synthetic capture, and writes to:
+`make android-evidence` performs the full synthetic Android integration journey
+and writes to:
 
 ```text
 .artifacts/evidence/<RUN_ID>/
 ├── environment.json
+├── integration-response.json
 ├── logcat.txt
 ├── manifest.json
 ├── report.json
 ├── report.md
 ├── test-results.json
-└── 01-launch.png
+├── driver-output.txt
+├── screenshots/
+│   ├── 01-connected-home.png
+│   ├── 02-catalog.png
+│   ├── ...
+│   └── 09-restored-cart.png
+└── repeats/                  # present when ANDROID_REPEAT > 1
 ```
 
 The manifest records repository/mobile SHAs, tool versions, Android metadata,
-classification, command status and each PNG's SHA-256/timestamp/scenario step.
+classification, scenario/attempt status and each PNG's
+SHA-256/timestamp/asserted scenario step.
 Text artifacts are scanned for obvious Authorization, bearer, cookie, token and
 API-key patterns before a synthetic run passes.
 
@@ -131,10 +162,11 @@ never be included.
 ## CI
 
 The normal Flutter workflow reads versions from `toolchain.json`, bootstraps the
-same venv and runs `make doctor` plus `make verify`. The separate manually
-dispatched Android workflow uses a KVM-backed GitHub emulator, invokes
-`make android-evidence`, and uploads only the APK and ignored evidence directory
-for 14 days. It never commits generated evidence and has no Odoo credentials.
+same venv and runs `make doctor` plus `make verify`. The separate Android
+workflow uses a KVM-backed GitHub emulator, invokes
+`make android-evidence ANDROID_REPEAT=3`, and uploads the APK and ignored
+evidence directory for 14 days even when the scenario fails. It never commits
+generated evidence and has no Odoo credentials.
 
 ## Troubleshooting
 
