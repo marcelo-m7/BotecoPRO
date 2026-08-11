@@ -1,0 +1,100 @@
+name: Android Evidence
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/android-evidence.yml"
+      - "apps/mobile"
+      - "Makefile"
+      - "scripts/**/*.py"
+      - "scripts/profiles/android.json"
+      - "scripts/toolchain.json"
+
+jobs:
+  emulator-evidence:
+    name: API 36 full Flutter E2E and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Read normative toolchain and Android profile
+        id: config
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          toolchain = json.load(open("scripts/toolchain.json", encoding="utf-8"))
+          profile = json.load(open("scripts/profiles/android.json", encoding="utf-8"))
+          print(f"flutter={toolchain['flutter']}")
+          print(f"java={toolchain['java']}")
+          print(f"api={profile['api_level']}")
+          print(f"target={profile['target']}")
+          print(f"arch={profile['arch']}")
+          PY
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ steps.config.outputs.java }}
+          cache: gradle
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.config.outputs.flutter }}
+          channel: stable
+          cache: true
+
+      - name: Bootstrap repository tooling
+        run: make bootstrap
+
+      - name: Enable KVM access
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run canonical Android evidence scenario
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ steps.config.outputs.api }}
+          target: ${{ steps.config.outputs.target }}
+          arch: ${{ steps.config.outputs.arch }}
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -prop persist.sys.locale=pt-BR
+          disable-animations: true
+          script: make android-evidence ANDROID_REPEAT=3
+
+      - name: Audit generated evidence
+        id: evidence_audit
+        if: always()
+        run: |
+          if find .artifacts/evidence -mindepth 1 -maxdepth 1 -type d -print -quit 2>/dev/null | grep -q .; then
+            make evidence-audit
+          fi
+
+      - name: Upload debug APK
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: botecopro-android-debug-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Android evidence
+        if: ${{ always() && steps.evidence_audit.outcome == 'success' }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: botecopro-android-evidence
+          path: .artifacts/evidence/
+          if-no-files-found: warn
+          retention-days: 14

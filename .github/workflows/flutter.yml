@@ -1,0 +1,79 @@
+name: Flutter CI
+
+on:
+  push:
+    paths:
+      - "apps/mobile"
+      - "apps/mobile/**"
+      - "scripts/**"
+      - "Makefile"
+      - ".github/workflows/flutter.yml"
+  pull_request:
+    paths:
+      - "apps/mobile"
+      - "apps/mobile/**"
+      - "scripts/**"
+      - "Makefile"
+      - ".github/workflows/flutter.yml"
+
+jobs:
+  verify:
+    name: Canonical verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Read normative toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          data = json.load(open("scripts/toolchain.json", encoding="utf-8"))
+          print(f"flutter={data['flutter']}")
+          print(f"java={data['java']}")
+          PY
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ steps.toolchain.outputs.java }}
+          cache: gradle
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.toolchain.outputs.flutter }}
+          channel: stable
+          cache: true
+
+      - name: Bootstrap repository tooling
+        run: make bootstrap
+
+      - name: Reject tracked local credentials
+        shell: bash
+        run: |
+          tracked_credentials="$(git ls-files -- .env .env.local '.env.*.local')"
+          if [[ -n "$tracked_credentials" ]]; then
+            echo "A local environment file is tracked. Remove it before merging."
+            exit 1
+          fi
+
+      - name: Diagnose toolchain
+        run: make doctor
+
+      - name: Verify Flutter application and Android build
+        run: make verify
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: botecopro-debug-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
