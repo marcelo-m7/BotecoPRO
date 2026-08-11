@@ -23,6 +23,16 @@ class PrivacyTests(unittest.TestCase):
     def test_audit_ignores_policy_words_without_values(self) -> None:
         self.assertEqual(audit_text("Never print Authorization, tokens or API keys."), [])
 
+    def test_audit_distinguishes_http_cookie_from_android_handle(self) -> None:
+        self.assertEqual(
+            audit_text("BiometricService: state: 0, cookie: 34"),
+            [],
+        )
+        self.assertEqual(
+            len(audit_text("Cookie: session_id=synthetic-value")),
+            1,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

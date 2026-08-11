@@ -13,7 +13,11 @@ TEXT_SECRET_PATTERNS = (
     re.compile(r"(?i)\b(?:authorization)\s*:\s*(?:bearer\s+)?\S+"),
     re.compile(r"(?i)\b(?:bearer)\s+[A-Za-z0-9._~+/=-]{8,}"),
     re.compile(r"(?i)\b(?:ODOO_ONLINE_API_KEY|API_KEY|ACCESS_TOKEN|REFRESH_TOKEN)\s*[=:]\s*\S+"),
-    re.compile(r"(?i)\b(?:cookie|set-cookie)\s*:\s*\S+"),
+    # Match HTTP cookie header values (name=value), not unrelated Android
+    # diagnostics such as BiometricService's numeric `cookie:` handle.
+    re.compile(
+        r"(?i)\b(?:cookie|set-cookie)\s*:\s*[^\s=;,]+=[^\s;,]+"
+    ),
 )
 TEXT_SUFFIXES = {".json", ".md", ".txt", ".log", ".xml", ".yaml", ".yml"}
 
