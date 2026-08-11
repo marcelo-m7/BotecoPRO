@@ -5,20 +5,20 @@ on:
     paths:
       - "apps/mobile"
       - "apps/mobile/**"
+      - "scripts/**"
+      - "Makefile"
       - ".github/workflows/flutter.yml"
   pull_request:
     paths:
       - "apps/mobile"
       - "apps/mobile/**"
+      - "scripts/**"
+      - "Makefile"
       - ".github/workflows/flutter.yml"
 
-defaults:
-  run:
-    working-directory: apps/mobile
-
 jobs:
-  analyze:
-    name: Analyze & Test
+  verify:
+    name: Canonical verify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,22 +27,33 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Read normative toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          data = json.load(open("scripts/toolchain.json", encoding="utf-8"))
+          print(f"flutter={data['flutter']}")
+          print(f"java={data['java']}")
+          PY
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: ${{ steps.toolchain.outputs.java }}
           cache: gradle
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.44.9"
+          flutter-version: ${{ steps.toolchain.outputs.flutter }}
           channel: stable
           cache: true
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Bootstrap repository tooling
+        run: make bootstrap
 
       - name: Reject tracked local credentials
         run: |
@@ -51,11 +62,16 @@ jobs:
             exit 1
           fi
 
-      - name: Analyze
-        run: flutter analyze --fatal-infos
+      - name: Diagnose toolchain
+        run: make doctor
 
-      - name: Run tests
-        run: flutter test
+      - name: Verify Flutter application and Android build
+        run: make verify
 
-      - name: Build Android debug APK
-        run: flutter build apk --debug --no-pub
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: botecopro-debug-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
