@@ -13,7 +13,8 @@
    product reconciliation. The full device/network interruption rehearsal
    remains a release acceptance check.
 9. **M8** — controlled POS writes after validating session, payments, stock,
-   taxes and accounting effects.
+   taxes and accounting effects. Local stable UUID allocation and fail-closed
+   preflight are implemented; no mutating transport exists yet.
 10. **Future** — outbox, retries, conflicts, device provisioning and QR/deep
     link credential onboarding.
 
@@ -33,7 +34,9 @@ the read-only connection, identity, POS and product milestones.
 ## Next write boundary
 
 The next milestone may rehearse a controlled `pos.order` flow only after the ADR
-validates native POS session ownership, pricelist/tax computation, payment,
-stock and accounting effects. The current cart remains local and is never an
-outbox or a queued Odoo write.
+validates the target dynamic contract, native POS session ownership,
+pricelist/tax computation, payment, stock and accounting effects in a disposable
+database. The current cart remains local and is never an outbox or a queued
+Odoo write. Its persisted UUIDs are retry identities reserved for that future
+rehearsal, not evidence of Odoo synchronization.
 See `docs/architecture/adr-m8-controlled-pos-write.md` for the unresolved gates.

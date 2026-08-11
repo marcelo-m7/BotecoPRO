@@ -1,6 +1,39 @@
 # ADR M8: controlled Odoo POS order write (research only)
 
-Status: **proposed and blocked**. This ADR does not authorize writes.
+Status: **preparation implemented; transport and rehearsal blocked**. This ADR
+does not authorize writes.
+
+## Implemented safety boundary
+
+The Flutter draft now reserves cryptographically random UUID v4 identities for
+the future order and each future line. They are persisted with the local draft,
+survive edits and restarts, and are reused on every preparation attempt. A line
+removed and added again receives a new identity; clearing the draft also clears
+the order identity. Allocating these values is a local operation only.
+
+A pure, fail-closed preflight now rejects a draft when any of these conditions
+is present:
+
+- offline, foreign company/POS context or inactive POS;
+- empty cart, missing/invalid stable UUIDs, changed or unavailable products;
+- unverified currency or missing live operational profile;
+- unreadable, absent, ambiguous, foreign or differently owned opened session;
+- a table attached to a non-Restaurant POS;
+- unverified target method, authoritative pricing, session ownership,
+  Restaurant collision policy, UUID read-back, disposable rehearsal or fiscal
+  identity.
+
+This preflight contains no JSON-2 mutation and cannot submit an order. Its
+external gates default to false and must be advanced with evidence, not merely
+with a UI choice.
+
+On 2026-08-11 a read-only Bearer request to the target `/doc` returned the web
+login shell rather than authenticated dynamic model documentation. JSON-2
+Bearer authentication does not establish a web-client session, so this result
+does not prove that `sync_from_ui` or `read_pos_data_uuid` is exposed by the
+target SaaS database. A sanctioned authenticated documentation export or
+manual web-session review remains required; invoking `sync_from_ui` is not an
+acceptable contract probe.
 
 ## Context and evidence levels
 
@@ -28,8 +61,8 @@ Evidence must not be conflated:
 | Disposable-database rehearsal | actual stock, payment, tax and accounting effects | pending |
 
 The public 19.0 source does not by itself prove the exact Enterprise SaaS 19.4
-contract. No write may be added until the instance `/doc`, standard frontend and
-a disposable database agree on that contract.
+contract. No mutating transport may be added until the instance `/doc`,
+standard frontend and a disposable database agree on that contract.
 
 Sources:
 
