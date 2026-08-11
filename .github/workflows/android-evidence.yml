@@ -5,6 +5,11 @@ on:
   push:
     paths:
       - ".github/workflows/android-evidence.yml"
+      - "apps/mobile"
+      - "Makefile"
+      - "scripts/**/*.py"
+      - "scripts/profiles/android.json"
+      - "scripts/toolchain.json"
 
 jobs:
   emulator-evidence:
