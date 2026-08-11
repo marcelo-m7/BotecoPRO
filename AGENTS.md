@@ -69,6 +69,32 @@ The smoke test is opt-in, read-only and never runs in CI. Historical credentials
 found in old app code or commits must be revoked/rotated; deleting a file does
 not invalidate a previously exposed key.
 
+## Canonical developer workflow
+
+Do not invent SDK setup, emulator startup, screenshot, logcat or report commands
+ad hoc. From the monorepo root, always start with the read-only diagnosis:
+
+```bash
+make doctor
+```
+
+Then create/reuse the repository-local Python environment and use the canonical
+verification commands:
+
+```bash
+make bootstrap
+make verify
+```
+
+Before Android device or emulator work, run `make android-doctor`. Use
+`make android-smoke` for the installed APK and `make android-evidence` for the
+ignored, synthetic evidence pipeline. Real-instance capture requires an
+explicit CLI classification and manual image privacy review. Never publish
+`.artifacts/` automatically. Toolchain versions are normative in
+`scripts/toolchain.json`; the Android test shape is in
+`scripts/profiles/android.json`. See `scripts/README.md` for physical-device,
+emulator, CI and troubleshooting flows.
+
 ## Commit prefixes
 
 ```text

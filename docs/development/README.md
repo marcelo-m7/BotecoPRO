@@ -22,12 +22,30 @@ ODOO_ONLINE_API_KEY=
 
 Never commit this file or use its values in tests, logs, screenshots or CI.
 
-## Flutter checks
+## Canonical toolchain
+
+```bash
+make doctor
+make bootstrap
+make verify
+```
+
+The root Python CLI is the canonical process/Android/evidence orchestrator;
+Flutter and Dart still own application tests. It uses a local ignored venv at
+`.tools/devtools-venv`, runs mobile commands from `apps/mobile`, and writes raw
+reports/screenshots/logcat only under ignored `.artifacts/`. Toolchain versions
+are centralized in `scripts/toolchain.json` and the Android test device profile
+in `scripts/profiles/android.json`. Full physical-device, emulator, evidence,
+CI and troubleshooting instructions are in [`scripts/README.md`](../../scripts/README.md).
+
+Focused commands remain available:
 
 ```bash
 make mobile-get
 make mobile-analyze
 make mobile-test
+make android-doctor
+make android-build
 ```
 
 The Odoo smoke flow is opt-in, read-only and must be run locally after an API
@@ -54,6 +72,13 @@ data in this public repository. They contain no authentication credential.
 
 Do not add arbitrary screenshots. `.gitignore` allowlists only the two reviewed
 files; every new image requires a secret/privacy review before publication.
+
+Generated Android captures are never written here. `make android-evidence`
+defaults to `SYNTHETIC`, explicitly resets only the development application's
+local data, generates a manifest and hashes under `.artifacts/evidence/`, and
+audits text artifacts for obvious secrets. `REAL_INSTANCE` capture must be
+requested explicitly and remains pending manual visual review. Capture and
+publication are separate decisions.
 
 ## Flutter structure
 

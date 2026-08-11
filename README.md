@@ -29,11 +29,16 @@ cd BotecoPRO
 cp .env.example .env.local
 # preencher a API key apenas localmente
 
-cd apps/mobile
-flutter pub get
-flutter analyze --fatal-infos
-flutter test
+make doctor
+make bootstrap
+make verify
 ```
+
+O Makefile delega à CLI Python canônica em `scripts/`, que fixa expectativas de
+Flutter/Java/Android, executa Flutter sempre em `apps/mobile` e produz logs,
+relatórios e evidências locais apenas sob diretórios ignorados. Antes de usar
+dispositivo ou emulador Android, execute `make android-doctor`. Consulte
+[`scripts/README.md`](scripts/README.md) para os fluxos físicos, emulador e CI.
 
 `.env.local` é ignorado pelo Git. A API key nunca deve aparecer em código,
 fixtures, logs, documentação, analytics ou CI.

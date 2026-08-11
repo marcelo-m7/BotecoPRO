@@ -33,3 +33,9 @@ combinação da CI sem segredos com o smoke autenticado read-only descrito em
 Nenhuma operação de `pos.order`, pagamento, stock ou contabilidade foi usada
 para produzir estas evidências. Novas imagens continuam ignoradas por padrão e
 exigem revisão explícita antes de entrar no Git.
+
+Capturas reproduzíveis novas usam `make android-evidence` e são geradas em
+`.artifacts/evidence/<RUN_ID>/`, nunca diretamente neste diretório. O pipeline
+classifica a fonte, gera manifesto/hashes/relatórios e audita artefatos textuais.
+Evidência `REAL_INSTANCE` continua exigindo inspeção visual manual; captura não
+autoriza publicação.
