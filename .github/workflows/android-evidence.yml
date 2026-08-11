@@ -2,6 +2,9 @@ name: Android Evidence
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/android-evidence.yml"
 
 jobs:
   emulator-evidence:
