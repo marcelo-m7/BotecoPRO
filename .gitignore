@@ -78,10 +78,12 @@ Thumbs.db
 logs/
 
 # ----- Public evidence --------------------------------------
-# Real Odoo screenshots may contain personal or operational data. Keep only
-# the sanitized policy document under version control.
+# Keep the explicitly reviewed evidence set narrow. Every other screenshot is
+# ignored so credentials or unrelated Odoo data cannot be added accidentally.
 docs/evidence/*
 !docs/evidence/README.md
+!docs/evidence/odoo-authenticated.png
+!docs/evidence/odoo-products.png
 
 # ----- OS ---------------------------------------------------
 .DS_Store

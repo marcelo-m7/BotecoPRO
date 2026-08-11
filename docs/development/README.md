@@ -45,6 +45,16 @@ set +a
 It never runs in CI and must not be redirected to a log or artifact containing
 environment values.
 
+## Public evidence
+
+The two reviewed real-data evidence images are published in
+[`docs/evidence/`](../evidence/README.md). They are the original, unmodified PNG
+blobs and deliberately expose the operator name/login plus operational catalog
+data in this public repository. They contain no authentication credential.
+
+Do not add arbitrary screenshots. `.gitignore` allowlists only the two reviewed
+files; every new image requires a secret/privacy review before publication.
+
 ## Flutter structure
 
 ```text

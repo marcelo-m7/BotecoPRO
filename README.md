@@ -61,4 +61,5 @@ posteriores.
 - `docs/architecture/domain-mapping.md` — mapeamento Flutter/Odoo;
 - `docs/architecture/offline-sync.md` — snapshot M7 e roadmap offline futuro;
 - `docs/roadmap/odoo-online-mvp.md` — milestones e critérios de aceite;
+- `docs/evidence/README.md` — capturas reais, originais e escopo da evidência;
 - `docs/archive/` — decisões e contratos intermediários históricos.
