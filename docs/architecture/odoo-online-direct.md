@@ -26,13 +26,20 @@ POST /json/2/pos.config/search_read
 POST /json/2/pos.category/search_read
 POST /json/2/product.product/search_count
 POST /json/2/product.product/search_read
+POST /json/2/restaurant.floor/search_read
+POST /json/2/restaurant.table/search_read
+POST /json/2/res.currency/read
+POST /json/2/product.pricelist/read
+POST /json/2/pos.session/search_read
+POST /json/2/pos.payment.method/read
 ```
 
-Calls use explicit domains, fields, company context and limits. The app never
-passes raw server tracebacks to users and never logs request headers or bodies.
-The connection diagnostic also counts the POS catalog with the same domain used
-by the paginated product list. A POS whose category restriction returns zero
-products is authenticated but not operationally ready.
+Company-scoped business calls use explicit domains, fields, company context and
+limits. The app never passes raw server tracebacks to users and never logs
+request headers or bodies. The connection diagnostic also counts the POS
+catalog with the same domain used by the paginated product list. A zero count is
+shown as a catalog-readiness warning; it does not turn a valid authentication
+into a connection failure.
 
 ## Operational UI boundary
 
@@ -42,25 +49,43 @@ add those real products to a local non-fiscal cart, optionally associated with
 a read-only Odoo Restaurant table. Changing company or POS clears that local
 cart so contexts never mix.
 
-A schema-v1 snapshot preserves the fully loaded catalog and Restaurant context
-after a successful synchronization. On network failure only, the exact same
+A schema-v1 snapshot preserves the fully loaded catalog and the Restaurant data
+that was readable after a successful synchronization. Catalog completeness is
+required before the snapshot is published. Restaurant reads are optional and
+currently tolerate a missing model or insufficient read permission by storing
+an empty Restaurant context. On network failure only, the exact same
 instance/user/company/POS can operate from that snapshot with an explicit
 offline indicator and synchronization timestamp.
 
 The local draft comanda is persisted separately and reconciled against the next
-fresh catalog. Changed and unavailable items remain visible. Neither snapshot
-nor draft contains the API key, and neither is a queued Odoo transaction.
+fresh catalog. Changed and unavailable items remain visible. M7 keeps one
+snapshot and one draft slot on the device; selecting another context discards a
+non-matching slot rather than mixing tenants. Neither snapshot nor draft
+contains the API key, and neither is a queued Odoo transaction.
 
-The displayed price is the `lst_price` catalog value returned by Odoo. It is
-informative only: POS pricelist, fiscal and transactional pricing are not
-reimplemented by Flutter and will be validated before any order write.
+The selected POS has a live read-only operational profile. Currency and
+pricelist metadata may be retained for offline value presentation. Session
+ownership, session IDs/states and payment methods stay in memory only and are
+hidden offline because those values become stale and can include personal or
+operational data. Rescue sessions are excluded and only a session whose exact
+state is `opened` can ever satisfy a future write-readiness check.
+
+The displayed price is the explicit numeric `lst_price` catalog value returned
+by Odoo; an absent or malformed value fails synchronization rather than being
+invented as zero. It and
+its presentation currency are informative only: M7 does not prove POS
+pricelist, fiscal, tax or transactional pricing and Flutter does not implement
+an independent pricing engine. Those inputs and the standard POS contract must
+be validated before any order write.
 
 ## Scope boundary
 
-The initial connection is read-only. `pos.session`, `pos.order`, payments,
-stock moves and accounting writes require a separate design and functional
-validation. Flutter Web is not a target for this credential model. Android,
-iOS and native POS are the supported clients.
+The implemented integration is read-only. Reading session metadata for an
+operational profile does not authorize creating, opening or closing a
+`pos.session`. Creating or updating `pos.order`, payments, stock moves and
+accounting records requires separate design and functional validation. Flutter
+Web is not a target for this credential model. Android, iOS and native POS are
+the supported clients.
 
 Fiscal master-data reconciliation is also a release gate. Documents whose
 recipient does not match the selected Odoo company remain draft historical

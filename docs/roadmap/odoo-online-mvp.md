@@ -8,24 +8,27 @@
 6. **M5** — POS configuration selection.
 7. **M6** — paginated POS categories and products, search/filter/detail and a
    client-side non-fiscal cart with optional read-only Restaurant table context.
-8. **M7** — complete: versioned read snapshots, explicit offline/stale state,
-   persistent context-bound draft cart and product reconciliation.
+8. **M7** — implemented and covered automatically: versioned read snapshots,
+   explicit offline/stale state, persistent context-bound draft cart and
+   product reconciliation. The full device/network interruption rehearsal
+   remains a release acceptance check.
 9. **M8** — controlled POS writes after validating session, payments, stock,
    taxes and accounting effects.
 10. **Future** — outbox, retries, conflicts, device provisioning and QR/deep
     link credential onboarding.
 
-M0–M7 are the current acceptance boundary. Smoke tests against the configured
+M0–M7 are the current implementation boundary. Smoke tests against the configured
 Odoo Online instance are local-only and read-only. A POS must return a nonzero
 catalog through its configured categories before the MVP is accepted.
 
 ## Current data gate
 
-The Bar do Jonas fiscal identity and the recipient of historical AmBev NF-e
-documents require documentary reconciliation. The related `account.move`
-records remain drafts and are not accounting evidence for the configured Odoo
-company until that review is completed. This blocks M8 writes but not the
-read-only connection, identity, POS and product milestones.
+The configured company's fiscal identity and the ownership of historical
+supplier documents require documentary reconciliation. Those documents are not
+accounting evidence for the selected Odoo company until that review is
+completed. Detailed company, supplier and accounting-record evidence remains
+local and is not published in this repository. This blocks M8 writes but not
+the read-only connection, identity, POS and product milestones.
 
 ## Next write boundary
 

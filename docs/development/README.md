@@ -31,8 +31,9 @@ make mobile-test
 ```
 
 The Odoo smoke flow is opt-in, read-only and must be run locally after an API
-key has been entered. It reports only sanitized version, identity, company, POS
-and product diagnostics:
+key has been entered. It asserts version, identity, company, POS, currency,
+pricelist, non-closed sessions, configured payment methods, Restaurant and
+product diagnostics without printing their values:
 
 ```bash
 set -a
