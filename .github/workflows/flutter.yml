@@ -27,10 +27,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.x"
+          flutter-version: "3.44.9"
           channel: stable
           cache: true
 
@@ -48,4 +55,7 @@ jobs:
         run: flutter analyze --fatal-infos
 
       - name: Run tests
-        run: flutter test --coverage
+        run: flutter test
+
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-pub
