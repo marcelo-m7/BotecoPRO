@@ -1,7 +1,7 @@
 [submodule "apps/mobile"]
 	path = apps/mobile
 	url = https://github.com/marcelo-m7/BotecoPro-app.git
-	branch = feat/odoo-online-mvp
+	branch = odoo-online
 [submodule "apps/website"]
 	path = apps/website
 	url = https://github.com/marcelo-m7/BotecoPRO-website.git
