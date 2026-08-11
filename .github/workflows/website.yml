@@ -3,10 +3,12 @@ name: Website CI
 on:
   push:
     paths:
+      - "apps/website"
       - "apps/website/**"
       - ".github/workflows/website.yml"
   pull_request:
     paths:
+      - "apps/website"
       - "apps/website/**"
       - ".github/workflows/website.yml"
 
@@ -21,12 +23,14 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
           cache-dependency-path: apps/website/package-lock.json
 
